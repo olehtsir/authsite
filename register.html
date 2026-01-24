@@ -8,19 +8,29 @@
     <body>
         <div class="container">
             <div class="card">
-                <h1>Реєстрація</h1>
+                <h1 data-i18n="register.title">Реєстрація</h1>
 
-                <input id="email" placeholder="Email" />
+                <input
+                    id="email"
+                    data-i18n-placeholder="form.email"
+                    placeholder="Email"
+                />
                 <input
                     id="password"
+                    data-i18n-placeholder="form.passwordMin"
                     type="password"
                     placeholder="Пароль (мін 6 символів)"
                 />
 
-                <button onclick="registerUser()">Створити акаунт</button>
+                <button onclick="registerUser()" data-i18n="register.button">
+                    Створити акаунт
+                </button>
 
                 <p class="small">
-                    Вже є акаунт? <a href="/authsite/index.html">Увійти</a>
+                    <span data-i18n="register.haveAccount">Вже є акаунт?</span>
+                    <a href="/authsite/index.html" data-i18n="register.toLogin"
+                        >Увійти</a
+                    >
                 </p>
 
                 <div id="msg" class="msg"></div>
