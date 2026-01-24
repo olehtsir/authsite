@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Login</title>
+        <link rel="stylesheet" href="/authsite/css/style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <h1>Вхід</h1>
+
+                <input id="email" placeholder="Email" />
+                <input id="password" type="password" placeholder="Пароль" />
+
+                <button onclick="loginUser()">Увійти</button>
+
+                <p class="small">
+                    Немає акаунту?
+                    <a href="/authsite/register.html">Зареєструватись</a>
+                </p>
+
+                <div id="msg" class="msg"></div>
+            </div>
+        </div>
+
+        <script src="/authsite/js/auth.js"></script>
+    </body>
+</html>

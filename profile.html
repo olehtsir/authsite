@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Profile</title>
+        <link rel="stylesheet" href="/authsite/css/style.css" />
+    </head>
+    <body onload="loadProfile()">
+        <div class="container">
+            <div class="card">
+                <h1>Профіль</h1>
+
+                <p>Ти залогінений як: <b id="who">...</b></p>
+
+                <div class="row">
+                    <button onclick="logoutUser()">Logout</button>
+                    <button
+                        onclick="window.location.href = '/authsite/index.html'"
+                    >
+                        На головну
+                    </button>
+                </div>
+
+                <div id="msg" class="msg"></div>
+            </div>
+        </div>
+
+        <script src="/authsite/js/auth.js"></script>
+    </body>
+</html>

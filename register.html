@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Register</title>
+        <link rel="stylesheet" href="/authsite/css/style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <h1>Реєстрація</h1>
+
+                <input id="email" placeholder="Email" />
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Пароль (мін 6 символів)"
+                />
+
+                <button onclick="registerUser()">Створити акаунт</button>
+
+                <p class="small">
+                    Вже є акаунт? <a href="/authsite/index.html">Увійти</a>
+                </p>
+
+                <div id="msg" class="msg"></div>
+            </div>
+        </div>
+
+        <script src="/authsite/js/auth.js"></script>
+    </body>
+</html>
