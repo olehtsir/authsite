@@ -8,16 +8,37 @@
     <body>
         <div class="container">
             <div class="card">
-                <h1>Вхід</h1>
+                <select id="langSelect" onchange="setLanguage(this.value)">
+                    <option value="uk">Українська</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                </select>
 
-                <input id="email" placeholder="Email" />
-                <input id="password" type="password" placeholder="Пароль" />
+                <h1 data-i18n="login.title">Вхід</h1>
 
-                <button onclick="loginUser()">Увійти</button>
+                <input
+                    id="email"
+                    data-i18n-placeholder="form.email"
+                    placeholder="Email"
+                />
+                <input
+                    id="password"
+                    data-i18n-placeholder="form.password"
+                    type="password"
+                    placeholder="Пароль"
+                />
+
+                <button onclick="loginUser()" data-i18n="login.button">
+                    Увійти
+                </button>
 
                 <p class="small">
-                    Немає акаунту?
-                    <a href="/authsite/register.html">Зареєструватись</a>
+                    <span data-i18n="login.noAccount">Немає акаунту?</span>
+                    <a
+                        href="/authsite/register.html"
+                        data-i18n="login.toRegister"
+                        >Зареєструватись</a
+                    >
                 </p>
 
                 <div id="msg" class="msg"></div>
