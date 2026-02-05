@@ -5,7 +5,7 @@
         <title>Profile</title>
         <link rel="stylesheet" href="css/style.css" />
     </head>
-    <body onload="loadProfile()">
+    <body>
         <div class="container">
             <div class="card">
                 <h1 data-i18n="profile.title">Профіль</h1>
@@ -16,11 +16,16 @@
                 </p>
 
                 <div class="row">
-                    <button onclick="logoutUser()" data-i18n="profile.logout">
+                    <button
+                        type="button"
+                        data-action="logout"
+                        data-i18n="profile.logout"
+                    >
                         Logout
                     </button>
                     <button
-                        onclick="window.location.href = '/authsite/index.html'"
+                        type="button"
+                        data-nav="/authsite/index.html"
                         data-i18n="profile.home"
                     >
                         На головну
