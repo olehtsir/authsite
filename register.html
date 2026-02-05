@@ -10,21 +10,32 @@
             <div class="card">
                 <h1 data-i18n="register.title">Реєстрація</h1>
 
-                <input
-                    id="email"
-                    data-i18n-placeholder="form.email"
-                    placeholder="Email"
-                />
-                <input
-                    id="password"
-                    data-i18n-placeholder="form.passwordMin"
-                    type="password"
-                    placeholder="Пароль (мін 6 символів)"
-                />
+                <form id="authForm" data-action="register" autocomplete="on">
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        inputmode="email"
+                        autocomplete="email"
+                        required
+                        data-i18n-placeholder="form.email"
+                        placeholder="Email"
+                    />
+                    <input
+                        id="password"
+                        name="password"
+                        data-i18n-placeholder="form.passwordMin"
+                        type="password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                        placeholder="Пароль (мін 6 символів)"
+                    />
 
-                <button onclick="registerUser()" data-i18n="register.button">
-                    Створити акаунт
-                </button>
+                    <button type="submit" data-i18n="register.button">
+                        Створити акаунт
+                    </button>
+                </form>
 
                 <p class="small">
                     <span data-i18n="register.haveAccount">Вже є акаунт?</span>
