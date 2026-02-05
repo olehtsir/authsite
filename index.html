@@ -8,7 +8,7 @@
     <body>
         <div class="container">
             <div class="card">
-                <select id="langSelect" onchange="setLanguage(this.value)">
+                <select id="langSelect">
                     <option value="uk">Українська</option>
                     <option value="en">English</option>
                     <option value="fr">Français</option>
@@ -16,21 +16,31 @@
 
                 <h1 data-i18n="login.title">Вхід</h1>
 
-                <input
-                    id="email"
-                    data-i18n-placeholder="form.email"
-                    placeholder="Email"
-                />
-                <input
-                    id="password"
-                    data-i18n-placeholder="form.password"
-                    type="password"
-                    placeholder="Пароль"
-                />
+                <form id="authForm" data-action="login" autocomplete="on">
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        inputmode="email"
+                        autocomplete="email"
+                        required
+                        data-i18n-placeholder="form.email"
+                        placeholder="Email"
+                    />
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        data-i18n-placeholder="form.password"
+                        placeholder="Пароль"
+                    />
 
-                <button onclick="loginUser()" data-i18n="login.button">
-                    Увійти
-                </button>
+                    <button type="submit" data-i18n="login.button">
+                        Увійти
+                    </button>
+                </form>
 
                 <p class="small">
                     <span data-i18n="login.noAccount">Немає акаунту?</span>
