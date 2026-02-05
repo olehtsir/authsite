@@ -1,3 +1,6 @@
+const BASE = "/authsite";
+const DEFAULT_LANG = "uk";
+
 const translations = {
     uk: {
         "login.title": "Вхід",
@@ -91,31 +94,53 @@ const translations = {
     },
 };
 
+const normalizeText = (text) =>
+    String(text || "")
+        .trim()
+        .replace(/\s+/g, " ");
+
+const messageLookup = new Map();
+Object.entries(translations).forEach(([, dict]) => {
+    Object.entries(dict).forEach(([key, value]) => {
+        if (key.startsWith("msg.")) {
+            messageLookup.set(normalizeText(value), key);
+        }
+    });
+});
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
 function getLanguage() {
-    return localStorage.getItem("lang") || "uk";
+    return localStorage.getItem("lang") || DEFAULT_LANG;
 }
 
 function t(key) {
     const lang = getLanguage();
-    return translations[lang]?.[key] || translations.uk[key] || key;
+    return (
+        translations[lang]?.[key] ||
+        translations[DEFAULT_LANG]?.[key] ||
+        key
+    );
 }
 
 function applyTranslations() {
-    // тексти
-    document.querySelectorAll("[data-i18n]").forEach((el) => {
+    $$("[data-i18n]").forEach((el) => {
         const key = el.getAttribute("data-i18n");
         el.textContent = t(key);
     });
 
-    // placeholders
-    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    $$("[data-i18n-placeholder]").forEach((el) => {
         const key = el.getAttribute("data-i18n-placeholder");
         el.setAttribute("placeholder", t(key));
     });
 
-    // селект мови в правильному стані
-    const sel = document.getElementById("langSelect");
+    const sel = $("#langSelect");
     if (sel) sel.value = getLanguage();
+
+    if (lastMsgKey) {
+        setMsg({ messageKey: lastMsgKey });
+    }
 }
 
 function setLanguage(lang) {
@@ -123,80 +148,111 @@ function setLanguage(lang) {
     applyTranslations();
 }
 
-// запуск при відкритті сторінки
-document.addEventListener("DOMContentLoaded", applyTranslations);
+document.addEventListener("DOMContentLoaded", init);
 
-async function post(path, body) {
-    const res = await fetch(`/authsite/api/${path}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+let lastMsgKey = "";
+
+function init() {
+    applyTranslations();
+
+    const langSelect = $("#langSelect");
+    if (langSelect) {
+        langSelect.addEventListener("change", (e) =>
+            setLanguage(e.target.value)
+        );
+    }
+
+    const form = $("#authForm");
+    if (form) {
+        form.addEventListener("submit", onAuthSubmit);
+    }
+
+    const logoutBtn = $("[data-action='logout']");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", logoutUser);
+    }
+
+    $$("[data-nav]").forEach((el) => {
+        el.addEventListener("click", () => {
+            window.location.href = el.dataset.nav;
+        });
+    });
+
+    if ($("#who")) loadProfile();
+}
+
+async function api(path, options = {}) {
+    const method = options.method || "GET";
+    const body = options.body;
+    const headers = {};
+    if (body !== undefined) headers["Content-Type"] = "application/json";
+
+    const res = await fetch(`${BASE}/api/${path}`, {
+        method,
+        headers,
         credentials: "include",
-        body: JSON.stringify(body),
+        body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 
     const data = await res.json().catch(() => ({}));
     return { ok: res.ok, data };
 }
 
-async function get(path) {
-    const res = await fetch(`/authsite/api/${path}`, {
-        method: "GET",
-        credentials: "include",
-    });
-
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, data };
-}
-
-function setMsg(serverData) {
+function setMsg(serverData = {}) {
     const el = document.getElementById("msg");
     if (!el) return;
 
     if (serverData.messageKey) {
+        lastMsgKey = serverData.messageKey;
         el.textContent = t(serverData.messageKey);
     } else if (serverData.message) {
-        el.textContent = serverData.message; // fallback
+        const normalized = normalizeText(serverData.message);
+        const key =
+            normalized.startsWith("msg.") ? normalized : messageLookup.get(normalized);
+        lastMsgKey = key || "";
+        el.textContent = key ? t(key) : serverData.message;
     } else {
+        lastMsgKey = "";
         el.textContent = "";
     }
 }
 
-async function registerUser() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+async function onAuthSubmit(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const action = form.dataset.action;
+    if (!action) return;
 
-    const result = await post("register.php", { email, password });
+    const email = (form.elements.email?.value || "").trim();
+    const password = form.elements.password?.value || "";
+
+    const result = await api(`${action}.php`, {
+        method: "POST",
+        body: { email, password },
+    });
+
     setMsg(result.data);
 
-    if (result.ok) window.location.href = "/authsite/profile.html";
-}
-
-async function loginUser() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const result = await post("login.php", { email, password });
-    setMsg(result.data);
-
-    if (result.ok) window.location.href = "/authsite/profile.html";
+    if (result.ok) window.location.href = `${BASE}/profile.html`;
 }
 
 async function loadProfile() {
-    const result = await get("me.php");
+    const result = await api("me.php");
+    const email = result.data?.user?.email;
 
-    if (!result.ok) {
-        window.location.href = "/authsite/index.html";
+    if (!result.ok || !email) {
+        window.location.href = `${BASE}/index.html`;
         return;
     }
 
-    document.getElementById("who").textContent = result.data.user.email;
+    $("#who").textContent = email;
 }
 
 async function logoutUser() {
-    const result = await post("logout.php", {});
+    const result = await api("logout.php", { method: "POST", body: {} });
     setMsg(result.data);
 
     setTimeout(() => {
-        window.location.href = "/authsite/index.html";
+        window.location.href = `${BASE}/index.html`;
     }, 300);
 }
